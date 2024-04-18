@@ -9,6 +9,99 @@ Created on Wed Apr 17 14:50:45 2024
 import numpy as np
 import pickle
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+#Structuring imports
+
+def run_analytics():
+  df = pd.read_csv('D:/DS-Nick-brown/Final-Project/campus-placements/Placement_Data_Full_Class.csv')
+  df.head(2)
+  #Global dataframe used for all the analytical purposes
+  
+
+  plt.figure(figsize=(8,6))
+  gender_counts = df['gender'].value_counts()
+  
+  # Plot the pie chart
+  fig = px.pie(
+    names=gender_counts.index, 
+    values=gender_counts.values,
+    labels=gender_counts.index,
+    hole=0.3,  # Hole size (0-1)
+    color_discrete_sequence=['limegreen', 'lightcoral'],  # Color sequence for each category
+    width=370,
+    height=370
+  )
+  
+  spec_counts = df['specialisation'].value_counts()
+  
+  fig1 = px.pie(
+    names=spec_counts.index, 
+    values=spec_counts.values,
+    labels=spec_counts.index,
+    hole=0.3,  # Hole size (0-1)
+    color_discrete_sequence=['teal', 'skyblue'],  # Color sequence for each category
+    width=370,
+    height=370
+  )
+  
+
+  # Show the figure using Streamlit
+  #st.plotly_chart(fig)
+  
+  
+  # Plot settings
+  plt.figure(figsize=(10, 8))
+  
+  
+  
+  
+  
+  
+  col1, col_space, col2 = st.columns([3, 0.2, 3])
+
+  # Display the plots
+  with col1:
+      st.subheader("Gender map")
+      st.plotly_chart(fig)
+  
+  with col2:
+     # Analytics part
+     ax = sns.countplot(data=df, x='gender', hue='status', palette=['skyblue', 'green'])
+     for p in ax.patches:
+         ax.annotate(f'{p.get_height()}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                     ha='center', va='center', fontsize=11, color='black', xytext=(0, 5),
+                     textcoords='offset points')
+     
+     st.subheader('Placed Vs Not-Placed')
+     plt.xlabel('Gender')
+     plt.ylabel('Count')
+     st.set_option('deprecation.showPyplotGlobalUse', False)
+     # Display the plot using Streamlit
+     st.pyplot()
+      
+  col3, col_space, col4 = st.columns([3,0.2,3])
+  with col3:
+    st.subheader('specialized ratio')
+    st.plotly_chart(fig1)
+  with col4:
+   #--plot for placement specialization--
+   
+   # Analytics part
+   ax = sns.countplot(data=df, x='specialisation', hue='status', palette=['skyblue', 'green'])
+   for p in ax.patches:
+       ax.annotate(f'{p.get_height()}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                   ha='center', va='center', fontsize=11, color='black', xytext=(0, 5),
+                   textcoords='offset points')
+   
+   st.subheader('Popular Major')
+   plt.xlabel('Major')
+   plt.ylabel('Count')
+   st.set_option('deprecation.showPyplotGlobalUse', False)
+   st.pyplot()
+  
 
 #This is a test comment to check the status of git
 def enhance_input(gender,ssc_p,ssc_b,hsc_p,hsc_b,hsc_s,degree_p,degree_t,workex,etest_p,specialisation,mba_p):
@@ -61,6 +154,7 @@ def enhance_input(gender,ssc_p,ssc_b,hsc_p,hsc_b,hsc_s,degree_p,degree_t,workex,
   
   
 def rerun_model():
+  #This is where the model's re-learning phase has to be triggered. 
   
   print('This block of cell is used to retrigger the modelling ipynb file')
   print('Running....')
@@ -113,11 +207,17 @@ def main():
     
  
     output=""
+    a=""
     if st.button("Rate your chances!"):
        output=enhance_input(gender,ssc_p,ssc_b,hsc_p,hsc_b,hsc_s,degree_p,degree_t,workex,etest_p,specialisation,mba_p)
     st.success(output)
     
+    
     st.subheader("Contribute to our software!!")
+    
+    if(st.button("Run Analytics")):
+      run_analytics()
+      
 
 if __name__ == '__main__':
     main()
