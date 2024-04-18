@@ -18,7 +18,11 @@ import plotly.express as px
 common_path='D:/DS-Nick-brown/Final-Project/campus-placements'
 
 def run_analytics():
+<<<<<<< HEAD
   df = pd.read_csv('{}/Placement_Data_Full_Class.csv'.format(common_path))
+=======
+  df = pd.read_csv('E:/Sem 2/DSEMT/campus-placements/Placement_Data_Full_Class.csv')
+>>>>>>> 532c4be82612ecc868be434957fae31604aca328
   df.head(2)
   #Global dataframe used for all the analytical purposes
   
@@ -163,7 +167,11 @@ def rerun_model():
 
   
 def predict_data(input_data):
+<<<<<<< HEAD
   loaded_model = pickle.load(open('{}/trained_model.sav'.format(common_path),'rb'))
+=======
+  loaded_model = pickle.load(open('E:/Sem 2/DSEMT/campus-placements/trained_model.sav','rb'))
+>>>>>>> 532c4be82612ecc868be434957fae31604aca328
   
   input_numpy = np.asarray(input_data)
   
@@ -217,6 +225,7 @@ def main():
     
     
     st.subheader("Contribute to our software!!")
+    #Lakshmi's part
     
     
     if(st.button("Run Analytics")):
