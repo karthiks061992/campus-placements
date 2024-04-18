@@ -16,7 +16,7 @@ import plotly.express as px
 #Structuring imports
 
 def run_analytics():
-  df = pd.read_csv('D:/DS-Nick-brown/Final-Project/campus-placements/Placement_Data_Full_Class.csv')
+  df = pd.read_csv('E:/Sem 2/DSEMT/campus-placements/Placement_Data_Full_Class.csv')
   df.head(2)
   #Global dataframe used for all the analytical purposes
   
@@ -160,7 +160,7 @@ def rerun_model():
   print('Running....')
   
 def predict_data(input_data):
-  loaded_model = pickle.load(open('D:/DS-Nick-brown/Final-Project/campus-placements/trained_model.sav','rb'))
+  loaded_model = pickle.load(open('E:/Sem 2/DSEMT/campus-placements/trained_model.sav','rb'))
   
   input_numpy = np.asarray(input_data)
   
@@ -214,6 +214,7 @@ def main():
     
     
     st.subheader("Contribute to our software!!")
+    #Lakshmi's part
     
     if(st.button("Run Analytics")):
       run_analytics()
