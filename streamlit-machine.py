@@ -10,7 +10,7 @@ import numpy as np
 import pickle
 import streamlit as st
 
-
+#This is a test comment to check the status of git
 def enhance_input(gender,ssc_p,ssc_b,hsc_p,hsc_b,hsc_s,degree_p,degree_t,workex,etest_p,specialisation,mba_p):
   #Handling Gender 
   if gender=="M":
@@ -66,7 +66,7 @@ def rerun_model():
   print('Running....')
   
 def predict_data(input_data):
-  loaded_model = pickle.load(open('D:/DS-Nick-brown/Final-Project/trained_model.sav','rb'))
+  loaded_model = pickle.load(open('D:/DS-Nick-brown/Final-Project/campus-placements/trained_model.sav','rb'))
   
   input_numpy = np.asarray(input_data)
   
