@@ -214,6 +214,7 @@ def main():
     
     
     st.subheader("Contribute to our software!!")
+    #Lakshmi's part
     
     if(st.button("Run Analytics")):
       run_analytics()
