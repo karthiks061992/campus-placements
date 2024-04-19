@@ -248,6 +248,7 @@ def save_data(gen, sscpercentage, sscboard, hscpercentage, hscboard, hscsubject,
 
 def main():
     st.title("Campus Placement Prediction Software")
+    st.image('{}/image-1.jpg'.format(common_path),use_column_width=True)
     
     st.subheader("Want to know where you stand?? ")
     gender = st.selectbox("Please choose your gender", ["M", "F"], index=0)
@@ -277,6 +278,7 @@ def main():
     
     
     st.subheader("Contribute to our software!!")
+    st.image('{}/image-2.png'.format(common_path),use_column_width=True)
     #Lakshmi's part
     gen = st.selectbox("Please choose your gender", ["M","F"], index=0, key="gender_selectbox")
 
@@ -317,6 +319,8 @@ def main():
     
     if(st.button("Run Analytics")):
       run_analytics()
+      
+    st.image('{}/image-3.jpg'.format(common_path),use_column_width=True)
       
       
 
