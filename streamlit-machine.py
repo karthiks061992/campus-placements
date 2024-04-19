@@ -13,16 +13,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
 #Structuring imports
 
 common_path='D:/DS-Nick-brown/Final-Project/campus-placements'
 
 def run_analytics():
-<<<<<<< HEAD
+
   df = pd.read_csv('{}/Placement_Data_Full_Class.csv'.format(common_path))
-=======
-  df = pd.read_csv('E:/Sem 2/DSEMT/campus-placements/Placement_Data_Full_Class.csv')
->>>>>>> 532c4be82612ecc868be434957fae31604aca328
+
   df.head(2)
   #Global dataframe used for all the analytical purposes
   
@@ -161,17 +163,53 @@ def enhance_input(gender,ssc_p,ssc_b,hsc_p,hsc_b,hsc_s,degree_p,degree_t,workex,
   
 def rerun_model():
   #This is where the model's re-learning phase has to be triggered. 
+  #Original analysis notebook , here we keep only the model building part
   
   print('This block of cell is used to retrigger the modelling ipynb file')
   print('Running....')
+  df = pd.read_csv('{}/Placement_Data_Full_Class.csv'.format(common_path))
+  #importing my dataframe to rerun my model
+  df.drop(columns='sl_no', inplace=True)
+  # dropping serial number column
+  df['Status'] = df['status'].replace({'Placed': 1, 'Not Placed' : 0})
+  #Salary column is dropped so no need to operate , only status is encoded
+  le = LabelEncoder()
+  df['gender'] = le.fit_transform(df['gender'])
+  df['ssc_b'] = le.fit_transform(df['ssc_b'])
+  df['hsc_b'] = le.fit_transform(df['hsc_b'])
+  df['hsc_s'] = le.fit_transform(df['hsc_s'])
+  df['degree_t'] = le.fit_transform(df['degree_t'])
+  df['workex'] = le.fit_transform(df['workex'])
+  df['specialisation'] = le.fit_transform(df['specialisation'])
+  #Operating on the label encoder to encode categorical variables
+  # Dropping Salary column as the students who did not get placed have the salary value as Null. 
+  #This will create bias while model building as it is representing similar information as the Target variable 'status'
+  new_df = df.drop(['salary','status'], axis=1)
+  X = new_df.iloc[:,:-1]
+  y = new_df.iloc[:,-1]
+  x_train,x_test,y_train,y_test = train_test_split(X,y,test_size=0.2, random_state=101)
+  log_it = LogisticRegression(random_state=32) #constructor invocation happens here and a random_state of 32 is set
+  log_it.fit(x_train,y_train)
+  y_pred_train = log_it.predict(x_train)
+  y_pred_test = log_it.predict(x_test)
+  # Specifying the parameters that we want to Hypertune
+
+  parameters = {'penalty': ['l1','l2','elasticnet'], 'C': [1,2,3,5,10,20,30,50], 'max_iter': [100,200,300]}
+  #At this step we use GridSearchCV to extract the best parameters which suits Logistic regression
+  log_it_grid = GridSearchCV(log_it, param_grid=parameters, scoring = 'accuracy', cv=10)
+  log_it_grid.fit(x_train,y_train)
+  y_pred_grid_test = log_it_grid.predict(x_test)
+  y_pred_grid_train = log_it_grid.predict(x_train)
+  pickle.dump(log_it_grid,open('{}/trained_model.sav'.format(common_path),'wb'))
+  return "Model retrained and saved successfully with rerun analytics"
+  
+  
+  
 
   
 def predict_data(input_data):
-<<<<<<< HEAD
+
   loaded_model = pickle.load(open('{}/trained_model.sav'.format(common_path),'rb'))
-=======
-  loaded_model = pickle.load(open('E:/Sem 2/DSEMT/campus-placements/trained_model.sav','rb'))
->>>>>>> 532c4be82612ecc868be434957fae31604aca328
   
   input_numpy = np.asarray(input_data)
   
@@ -192,6 +230,21 @@ def predict_data(input_data):
 
 #gender	ssc_p	ssc_b	hsc_p	hsc_b	hsc_s	degree_p	degree_t	
 #workex	etest_p	specialisation	mba_p
+
+# Function save_data
+def save_data(gen, sscpercentage, sscboard, hscpercentage, hscboard, hscsubject, degreepercentage, degreesubject, workexp, etestpercentage, spec, mbapercentage, status):
+    # Open existing CSV file in pandas as a DataFrame
+    df = pd.read_csv('{}/Placement_Data_Full_Class.csv'.format(common_path))
+
+    # Append a new entry to the DataFrame
+    new_entry = {'sl_no':[5],'gender':[gen],'ssc_p':[sscpercentage],'ssc_b':[sscboard],'hsc_p':[hscpercentage],'hsc_b':[hscboard],'hsc_s':[hscsubject],'degree_p':[degreepercentage],'degree_t':[degreesubject],'workex':[workexp],'etest_p':[etestpercentage],'specialisation':[spec],'mba_p':[mbapercentage],'status':[status],'salary':[0]}
+    new_entry_df = pd.DataFrame(new_entry)
+    df = pd.concat([df, new_entry_df])
+
+    # Save the DataFrame as a new CSV file
+    df.to_csv('{}/Placement_Data_Full_Class.csv'.format(common_path),index=False)
+    
+    return "Data Saved"
 
 def main():
     st.title("Campus Placement Prediction Software")
@@ -218,7 +271,6 @@ def main():
     
  
     output=""
-    a=""
     if st.button("Rate your chances!"):
        output=enhance_input(gender,ssc_p,ssc_b,hsc_p,hsc_b,hsc_s,degree_p,degree_t,workex,etest_p,specialisation,mba_p)
     st.success(output)
@@ -226,10 +278,46 @@ def main():
     
     st.subheader("Contribute to our software!!")
     #Lakshmi's part
+    gen = st.selectbox("Please choose your gender", ["M","F"], index=0, key="gender_selectbox")
+
+    # Senior Scondary School Details
+    sscpercentage = st.slider("Enter your secondary school percentage", min_value=0.0, max_value=100.0, step=0.01, format="%.2f", key="sscp_slider")
+    sscboard = st.selectbox("Choose your secondary school board", ["Central","Others"], index=1, key="ssc_selectbox")
+    
+    # High school details
+    hscpercentage = st.slider("Enter your high school percentage", min_value=0.0, max_value=100.0, step=0.01, format="%.2f", key="hscp_selectbox")
+    hscboard = st.selectbox("Choose your high school board", ["Central","Others"], index=1, key="hscbtselectbox")
+    hscsubject = st.selectbox("Choose your high school subject", ["Science","Commerce","Arts"], index=1, key="hscsub_selectbox")
+    
+    # Degree details
+    degreepercentage = st.slider("Enter your degree percentage", min_value=0.0, max_value=100.0, step=0.01, format="%.2f", key="degreep_slider")
+    degreesubjects = st.selectbox("Enter your degree subject", ["Sci&Tech","Comm&Mgmt","Others"], index=1, key="degreesub-selectbox")
+    
+    # Work Experience
+    workexp = st.selectbox("Do you have work experience?", ["Yes","No"], index=1, key="workexp_selectbox")
+    
+    # Entrance test percentage
+    etestpercentage = st.slider("Enter your entrance test percentage", min_value=0.0, max_value=100.0, step=0.01, format="%.2f", key="etestp_slider")
+    
+    # Specialization
+    spec = st.selectbox("What is your specialisation", ["Mkt&HR","Mkt&Fin"], index=1, key="spec_selectbox")
+    
+    # MBA percentage
+    mbapercentage = st.slider("Enter your MBA percentage", min_value=0.0, max_value=100.0, step=0.01, format="%.2f", key="mbap_slider")
+    
+    # Details
+    status = st.selectbox("Were you placed?", ["Placed","Not Placed"], index=1, key="status_selectbox") 
+    
+    op = ""
+    if st.button("Save Data !"):
+        op = save_data(gen, sscpercentage, sscboard, hscpercentage, hscboard, hscsubject, degreepercentage, degreesubjects, workexp, etestpercentage, spec, mbapercentage, status)
+        rerun_model()
+    st.success("Successfully saved the data and retrained the model")
     
     
     if(st.button("Run Analytics")):
       run_analytics()
+      
       
 
 if __name__ == '__main__':
