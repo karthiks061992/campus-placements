@@ -317,7 +317,7 @@ def main():
     st.success("Successfully saved the data and retrained the model")
     
     
-    if(st.button("Run Analytics")):
+    if(st.checkbox("Run Analytics")):
       run_analytics()
       
     st.image('{}/image-3.jpg'.format(common_path),use_column_width=True)
