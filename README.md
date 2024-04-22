@@ -8,6 +8,6 @@ To run the project locally , please follow the following steps
 4) Continue to run the implementation after the application bootup
 
 # Global-link
-https://campus-placements-8mvwccfpf5r2sn8wjxnd2s.streamlit.app/
+https://campus-placements-hy5puv27opikguym8l7ihq.streamlit.app/
 
 
